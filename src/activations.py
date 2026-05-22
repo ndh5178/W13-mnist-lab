@@ -5,7 +5,6 @@
 학생 구현 대상:
 - ReLU.forward, ReLU.backward
 - Softmax.forward, Softmax.backward
-test
 """
 
 import numpy as np
