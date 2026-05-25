@@ -32,11 +32,8 @@ class Affine:
         Returns:
             (batch_size, output_dim)
         """
-        # TODO: backward에서 사용할 입력 x를 저장하고 x @ W + b를 반환하세요.
-        
         self.x = x
-        out = x @ self.W + self.b
-        return out
+        return x @ self.W + self.b
 
     def backward(self, dout):
         """

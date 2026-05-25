@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """학습 루프, 평가, 시각화 함수 모음."""
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from losses import cross_entropy_loss
@@ -18,8 +17,6 @@ def train(model, optimizer, x_train, y_train, epochs=20, batch_size=128):
     Returns:
         loss_history: epoch별 평균 손실 리스트
     """
-    # TODO: epoch마다 데이터를 섞고, batch 단위로 forward/loss/backward/update를 수행하세요.
-    # 힌트: Softmax + CrossEntropy 결합 gradient는 y_pred copy에서 정답 위치에 1을 빼서 만듭니다.
     loss_history = []
     num_train = x_train.shape[0]
 
@@ -59,6 +56,8 @@ def evaluate(model, x, y):
 
 def plot_loss_history(loss_history):
     """손실 커브 그래프."""
+    import matplotlib.pyplot as plt
+
     plt.plot(loss_history)
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
