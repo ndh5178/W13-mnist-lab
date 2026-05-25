@@ -6,7 +6,7 @@
 - ReLU.forward, ReLU.backward
 - Softmax.forward, Softmax.backward
 """
-
+# D:\miniconda3\condabin\conda.bat activate mnist-lab
 import numpy as np
 
 
@@ -28,8 +28,10 @@ class ReLU:
         Returns:
             x와 같은 shape. x > 0인 위치만 원래 값을 유지합니다.
         """
-        self.mask = x > 0
-        return np.maximum(x, 0)
+        # TODO: x > 0 위치를 self.mask에 저장하고, 음수/0 위치는 0으로 바꾸세요.
+        self.mask = (x > 0)
+        return np.maximum(0,x)
+
 
     def backward(self, dout):
         """

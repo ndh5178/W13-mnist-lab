@@ -25,6 +25,9 @@ env/
 .coverage
 htmlcov/
 
+# 참고 자료
+deep-learning-from-scratch/
+md/
 # 기타
 .DS_Store
 *.swp
