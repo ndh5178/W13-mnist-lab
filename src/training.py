@@ -22,25 +22,26 @@ def train(model, optimizer, x_train, y_train, epochs=20, batch_size=128):
 
     for _ in range(epochs):
         indices = np.random.permutation(num_train)
-        epoch_losses = []
+        epoch_loss = 0.0
 
         for start in range(0, num_train, batch_size):
-            batch_indices = indices[start : start + batch_size]
+            batch_indices = indices[start:start + batch_size]
             x_batch = x_train[batch_indices]
             y_batch = y_train[batch_indices]
+            current_batch_size = x_batch.shape[0]
 
             y_pred = model.forward(x_batch, train=True)
             loss = cross_entropy_loss(y_pred, y_batch)
-            epoch_losses.append(loss)
+            epoch_loss += loss * current_batch_size
 
             dout = y_pred.copy()
-            dout[np.arange(y_batch.shape[0]), y_batch] -= 1
-            dout /= y_batch.shape[0]
+            dout[np.arange(current_batch_size), y_batch] -= 1
+            dout /= current_batch_size
 
             model.backward(dout)
             optimizer.update(model.params, model.grads)
 
-        loss_history.append(float(np.mean(epoch_losses)))
+        loss_history.append(epoch_loss / num_train)
 
     return loss_history
 

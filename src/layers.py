@@ -46,6 +46,9 @@ class Affine:
         Side effects:
             self.dW, self.db에 optimizer가 사용할 gradient를 저장합니다.
         """
+        # TODO: self.dW, self.db, dx를 계산하세요.
+        # 힌트: dW = x.T @ dout, db = batch 방향 합, dx = dout @ W.T
+        
         self.dW = self.x.T @ dout
         self.db = np.sum(dout, axis=0)
         dx = dout @ self.W.T
@@ -83,14 +86,19 @@ class BatchNorm:
         Returns:
             정규화 후 gamma, beta가 적용된 배열
         """
+        # TODO: train=True에서는 batch mean/var로 정규화하고 running 통계를 갱신하세요.
+        # TODO: train=False에서는 running_mean/running_var를 사용하세요.
         if train:
             mu = np.mean(x, axis=0)
             var = np.var(x, axis=0)
+            xc = x - mu
             std = np.sqrt(var + self.eps)
-            x_hat = (x - mu) / std
+            x_hat = xc / std
 
-            self.x_hat = x_hat
+            self.xc = xc
             self.std = std
+            self.x_hat = x_hat
+            self.batch_size = x.shape[0]
 
             self.running_mean = self.momentum * self.running_mean + (1 - self.momentum) * mu
             self.running_var = self.momentum * self.running_var + (1 - self.momentum) * var
@@ -109,16 +117,15 @@ class BatchNorm:
         Returns:
             dx: BatchNorm 입력 x에 대한 gradient
         """
-        batch_size = dout.shape[0]
+        # TODO: self.dbeta, self.dgamma, dx를 계산하세요.
+        # 힌트: 먼저 dbeta와 dgamma shape가 beta/gamma와 같은지 확인합니다.
         self.dbeta = np.sum(dout, axis=0)
         self.dgamma = np.sum(dout * self.x_hat, axis=0)
 
         dx_hat = dout * self.gamma
-        dx = (
-            batch_size * dx_hat
-            - np.sum(dx_hat, axis=0)
-            - self.x_hat * np.sum(dx_hat * self.x_hat, axis=0)
-        ) / (batch_size * self.std)
+        dvar = np.sum(dx_hat * self.xc * -0.5 * (self.std ** -3), axis=0)
+        dmu = np.sum(dx_hat * -1 / self.std, axis=0) + dvar * np.mean(-2 * self.xc, axis=0)
+        dx = dx_hat / self.std + dvar * 2 * self.xc / self.batch_size + dmu / self.batch_size
         return dx
 
 
@@ -140,6 +147,8 @@ class Dropout:
             x: 입력 배열
             train: True면 무작위 mask 적용, False면 평균적인 출력 크기로 scale
         """
+        # TODO: train=True에서는 mask를 만들고 x에 곱하세요.
+        # TODO: train=False에서는 x * (1 - drop_ratio)를 반환하세요.
         if train:
             self.mask = np.random.rand(*x.shape) > self.drop_ratio
             return x * self.mask
@@ -147,4 +156,5 @@ class Dropout:
 
     def backward(self, dout):
         """forward에서 꺼졌던 뉴런 위치에는 gradient도 흘리지 않습니다."""
+        # TODO: forward에서 만든 mask를 dout에 곱하세요.
         return dout * self.mask
