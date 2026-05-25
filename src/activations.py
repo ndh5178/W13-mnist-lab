@@ -26,8 +26,8 @@ class ReLU:
         Returns:
             x와 같은 shape. x > 0인 위치만 원래 값을 유지합니다.
         """
-        # TODO: x > 0 위치를 self.mask에 저장하고, 음수/0 위치는 0으로 바꾸세요.
-        raise NotImplementedError("ReLU.forward를 구현하세요.")
+        self.mask = x > 0
+        return np.maximum(x, 0)
 
     def backward(self, dout):
         """
@@ -37,8 +37,9 @@ class ReLU:
         Returns:
             ReLU 입력 x에 대한 gradient. forward 때 x <= 0이었던 위치는 0입니다.
         """
-        # TODO: forward에서 저장한 self.mask를 이용해 gradient가 흐를 위치만 남기세요.
-        raise NotImplementedError("ReLU.backward를 구현하세요.")
+        dx = dout.copy()
+        dx[~self.mask] = 0
+        return dx
 
 
 class Softmax:
@@ -57,14 +58,15 @@ class Softmax:
         Returns:
             (batch_size, num_classes) 확률. 각 행의 합은 1입니다.
         """
-        # TODO: 수치 안정성을 위해 row별 max를 뺀 뒤 softmax 확률을 계산하세요.
-        # 힌트: np.max(..., axis=1, keepdims=True), np.exp, np.sum을 사용합니다.
-        raise NotImplementedError("Softmax.forward를 구현하세요.")
+        row_max = np.max(x, axis=1, keepdims=True)
+        stable_x = x - row_max
+        exp_x = np.exp(stable_x)
+        sum_exp = np.sum(exp_x, axis=1, keepdims=True)
+        return exp_x / sum_exp
 
     def backward(self, dout):
         """
         Softmax와 Cross Entropy를 함께 미분한 gradient를 train()에서 직접 만들기 때문에
         여기서는 받은 gradient를 그대로 통과시킵니다.
         """
-        # TODO: train()에서 만든 gradient를 그대로 반환하세요.
-        raise NotImplementedError("Softmax.backward를 구현하세요.")
+        return dout
