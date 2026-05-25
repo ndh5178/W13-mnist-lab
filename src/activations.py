@@ -17,6 +17,8 @@ class ReLU:
     은닉층에서 음수 값은 0으로 막고, 양수 값은 그대로 통과시킵니다.
     forward에서 만든 mask는 backward 때 "어느 위치로 gradient를 흘릴지" 결정하는 데 사용됩니다.
     """
+    def __init__(self):
+        self.mask = None
 
     def forward(self, x):
         """
@@ -40,9 +42,8 @@ class ReLU:
             ReLU 입력 x에 대한 gradient. forward 때 x <= 0이었던 위치는 0입니다.
         """
         # TODO: forward에서 저장한 self.mask를 이용해 gradient가 흐를 위치만 남기세요.
-        dx = dout.copy()
-        dx[~self.mask] = 0
-        return dx
+
+        return self.mask * dout
 
 
 class Softmax:
@@ -63,12 +64,12 @@ class Softmax:
         """
         # TODO: 수치 안정성을 위해 row별 max를 뺀 뒤 softmax 확률을 계산하세요.
         # 힌트: np.max(..., axis=1, keepdims=True), np.exp, np.sum을 사용합니다.
-        x_max= x - np.max(x, axis=1, keepdims=True)
-        expx = np.exp(x_max)
-        sum = np.sum(expx, axis=1, keepdims=True)
-        out = expx/sum
+        x = x - np.max(x, axis=1, keepdims=True)
+        exp_x = np.exp(x)
+        out = exp_x / np.sum(exp_x, axis=1, keepdims=True)
         return out
-    
+
+
     def backward(self, dout):
         """
         Softmax와 Cross Entropy를 함께 미분한 gradient를 train()에서 직접 만들기 때문에
@@ -76,4 +77,4 @@ class Softmax:
         """
         # TODO: train()에서 만든 gradient를 그대로 반환하세요.
         return dout
-        
+

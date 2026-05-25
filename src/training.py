@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """학습 루프, 평가, 시각화 함수 모음."""
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from losses import cross_entropy_loss
@@ -58,6 +57,8 @@ def evaluate(model, x, y):
 
 def plot_loss_history(loss_history):
     """손실 커브 그래프."""
+    import matplotlib.pyplot as plt
+
     plt.plot(loss_history)
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
