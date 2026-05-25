@@ -16,7 +16,7 @@ class Affine:
     완전연결층(Fully Connected Layer).
 
     수식은 y = xW + b 입니다.
-    MNIST에서는 784개 픽셀 입력을 은닉층/출력층 차원으로 선형 변환하는 역할을 합니다.
+    MNIST에서는 784개 픽셀 입력을 은닉층/출력층 차원으로 선형 변환하는 역할을 합니다.=
     """
 
     def __init__(self, W, b):
@@ -32,8 +32,10 @@ class Affine:
         Returns:
             (batch_size, output_dim)
         """
+        # TODO: backward에서 사용할 입력 x를 저장하고 x @ W + b를 반환하세요.
         self.x = x
-        return x @ self.W + self.b
+        out = np.dot(x, self.W) + self.b
+        return out
 
     def backward(self, dout):
         """
@@ -48,16 +50,15 @@ class Affine:
         """
         # TODO: self.dW, self.db, dx를 계산하세요.
         # 힌트: dW = x.T @ dout, db = batch 방향 합, dx = dout @ W.T
-        
-        self.dW = self.x.T @ dout
+        self.dW = np.dot(dout, self.x.T)
         self.db = np.sum(dout, axis=0)
-        dx = dout @ self.W.T
+        dx = np.dot(self.x.T, dout)
         return dx
 
 
 class BatchNorm:
     """
-    Batch Normalization.
+ ...................................    Batch Normalization.
 
     미니배치 단위로 각 feature의 평균과 분산을 맞춰 학습을 안정화합니다.
     train=True일 때는 현재 배치 통계를 쓰고, 추론 때는 누적 running_mean/running_var를 사용합니다.
