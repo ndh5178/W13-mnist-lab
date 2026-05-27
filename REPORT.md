@@ -100,7 +100,7 @@ epochs 20
 
 | 항목 | 내용 |
 | --- | --- |
-| OS | Windows 11 |
+| 환경 | Google Colab |
 | Python | 3.12.13 |
 | 주요 라이브러리 | NumPy 2.3.5 |
 | 데이터셋 | MNIST, `data/mnist.npz` |
